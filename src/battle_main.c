@@ -233,7 +233,6 @@ EWRAM_DATA u16 gMoveToLearn = 0;
 EWRAM_DATA u8 gBattleMonForms[MAX_BATTLERS_COUNT] = {0};
 
 COMMON_DATA MainCallback gPreBattleCallback1 = NULL;
-Use code with caution.
 COMMON_DATA void (*gBattleMainFunc)(void) = NULL;
 COMMON_DATA struct BattleResources *gBattleResourcesPtr = NULL;
 COMMON_DATA struct BattleResults gBattleResults = {0};
@@ -423,7 +422,12 @@ TYPE_STEEL, TYPE_STEEL, TYPE_MUL_NOT_EFFECTIVE,
 TYPE_FORESIGHT, TYPE_FORESIGHT, TYPE_MUL_NO_EFFECT,
 TYPE_NORMAL, TYPE_GHOST, TYPE_MUL_NO_EFFECT,
 TYPE_FIGHTING, TYPE_GHOST, TYPE_MUL_NO_EFFECT,
-
+TYPE_LIGHT, TYPE_DARK, TYPE_MUL_SUPER_EFFECTIVE,
+TYPE_DARK, TYPE_LIGHT, TYPE_MUL_NO_EFFECT,
+TYPE_LIGHT, TYPE_LIGHT, TYPE_MUL_NOT_EFFECTIVE,
+TYPE_LIGHT, TYPE_FIRE, TYPE_MUL_NOT_EFFECTIVE,
+TYPE_LIGHT, TYPE_STEEL, TYPE_MUL_NOT_EFFECTIVE,
+TYPE_GRASS, TYPE_LIGHT, TYPE_MUL_SUPER_EFFECTIVE,
 TYPE_ENDTABLE, TYPE_ENDTABLE, TYPE_MUL_NO_EFFECT
 };
 const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
@@ -446,9 +450,6 @@ const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
 [TYPE_ICE] = _("ICE"),
 [TYPE_DRAGON] = _("DRAGON"),
 [TYPE_DARK] = _("DARK"),
-    [TYPE_LIGHT] = _("LIGHT"),
-    [TYPE_LIGHT] = _("LIGHT"),
-    [TYPE_LIGHT] = _("LIGHT"),
 [TYPE_LIGHT] = _("LIGHT"),
 };
 
@@ -3331,6 +3332,7 @@ void FaintClearSetData(void)
 
     gBattleMons[gActiveBattler].types[0] = gSpeciesInfo[gBattleMons[gActiveBattler].species].types[0];
     gBattleMons[gActiveBattler].types[1] = gSpeciesInfo[gBattleMons[gActiveBattler].species].types[1];
+    gBattleMons[gActiveBattler].types[2] = gSpeciesInfo[gBattleMons[gActiveBattler].species].type3;
 
     ClearBattlerMoveHistory(gActiveBattler);
     ClearBattlerAbilityHistory(gActiveBattler);
@@ -3399,6 +3401,7 @@ static void BattleIntroDrawTrainersOrMonsSprites(void)
 
             gBattleMons[gActiveBattler].types[0] = gSpeciesInfo[gBattleMons[gActiveBattler].species].types[0];
             gBattleMons[gActiveBattler].types[1] = gSpeciesInfo[gBattleMons[gActiveBattler].species].types[1];
+            gBattleMons[gActiveBattler].types[2] = gSpeciesInfo[gBattleMons[gActiveBattler].species].type3;
             gBattleMons[gActiveBattler].ability = GetAbilityBySpecies(gBattleMons[gActiveBattler].species, gBattleMons[gActiveBattler].abilityNum);
             hpOnSwitchout = &gBattleStruct->hpOnSwitchout[GetBattlerSide(gActiveBattler)];
             *hpOnSwitchout = gBattleMons[gActiveBattler].hp;

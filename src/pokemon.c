@@ -2193,26 +2193,6 @@ void ZeroEnemyPartyMons(void)
 }
 
 void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
-void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hashf, u32 personality, u8 option, u32 customValue)
-{
-    if (species != SPECIES_NONE && species <= SPECIES_EGG)
-    {
-        if (gSpeciesInfo[species].types[0] != TYPE_FIRE && gSpeciesInfo[species].types[1] != TYPE_FIRE)
-        {
-            // Randomly swap illegal Pokémon with Vulpix or Houndour
-            if (Random() % 2 == 0)
-            {
-                species = SPECIES_VULPIX;
-            }
-            else
-            {
-                species = SPECIES_HOUNDOUR;
-            }
-        }
-    }
-    
-    // ... rest of vanilla CreateMon code follows
-
 {
     u32 mail;
     ZeroMonData(mon);
@@ -4724,6 +4704,7 @@ void CopyPlayerPartyMonToBattleData(u8 battler, u8 partyIndex)
     gBattleMons[battler].otId = GetMonData(&gPlayerParty[partyIndex], MON_DATA_OT_ID, NULL);
     gBattleMons[battler].types[0] = gSpeciesInfo[gBattleMons[battler].species].types[0];
     gBattleMons[battler].types[1] = gSpeciesInfo[gBattleMons[battler].species].types[1];
+    gBattleMons[battler].types[2] = gSpeciesInfo[gBattleMons[battler].species].type3;
     gBattleMons[battler].ability = GetAbilityBySpecies(gBattleMons[battler].species, gBattleMons[battler].abilityNum);
     GetMonData(&gPlayerParty[partyIndex], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gBattleMons[battler].nickname, nickname);

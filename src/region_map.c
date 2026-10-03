@@ -1172,6 +1172,8 @@ static void RegionMap_InitializeStateBasedOnSSTidalLocation(void)
     sRegionMap->cursorPosY = gRegionMapEntries[sRegionMap->mapSecId].y + y + MAPCURSOR_Y_MIN;
 }
 
+static bool8 IsFlyDestinationUnlocked(mapsec_u16_t mapSecId);
+
 static u8 GetMapsecType(mapsec_u16_t mapSecId)
 {
     switch (mapSecId)
@@ -1179,43 +1181,84 @@ static u8 GetMapsecType(mapsec_u16_t mapSecId)
     case MAPSEC_NONE:
         return MAPSECTYPE_NONE;
     case MAPSEC_LITTLEROOT_TOWN:
-        return FlagGet(FLAG_VISITED_LITTLEROOT_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_OLDALE_TOWN:
-        return FlagGet(FLAG_VISITED_OLDALE_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_DEWFORD_TOWN:
-        return FlagGet(FLAG_VISITED_DEWFORD_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_LAVARIDGE_TOWN:
-        return FlagGet(FLAG_VISITED_LAVARIDGE_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_FALLARBOR_TOWN:
-        return FlagGet(FLAG_VISITED_FALLARBOR_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_VERDANTURF_TOWN:
-        return FlagGet(FLAG_VISITED_VERDANTURF_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_PACIFIDLOG_TOWN:
-        return FlagGet(FLAG_VISITED_PACIFIDLOG_TOWN) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_PETALBURG_CITY:
-        return FlagGet(FLAG_VISITED_PETALBURG_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_SLATEPORT_CITY:
-        return FlagGet(FLAG_VISITED_SLATEPORT_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_MAUVILLE_CITY:
-        return FlagGet(FLAG_VISITED_MAUVILLE_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_RUSTBORO_CITY:
-        return FlagGet(FLAG_VISITED_RUSTBORO_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_FORTREE_CITY:
-        return FlagGet(FLAG_VISITED_FORTREE_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_LILYCOVE_CITY:
-        return FlagGet(FLAG_VISITED_LILYCOVE_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_MOSSDEEP_CITY:
-        return FlagGet(FLAG_VISITED_MOSSDEEP_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_SOOTOPOLIS_CITY:
-        return FlagGet(FLAG_VISITED_SOOTOPOLIS_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_EVER_GRANDE_CITY:
-        return FlagGet(FLAG_VISITED_EVER_GRANDE_CITY) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
+        return IsFlyDestinationUnlocked(mapSecId) ? MAPSECTYPE_CITY_CANFLY : MAPSECTYPE_CITY_CANTFLY;
     case MAPSEC_BATTLE_FRONTIER:
         return FlagGet(FLAG_LANDMARK_BATTLE_FRONTIER) ? MAPSECTYPE_BATTLE_FRONTIER : MAPSECTYPE_NONE;
     case MAPSEC_SOUTHERN_ISLAND:
         return FlagGet(FLAG_LANDMARK_SOUTHERN_ISLAND) ? MAPSECTYPE_ROUTE : MAPSECTYPE_NONE;
     default:
         return MAPSECTYPE_ROUTE;
+    }
+}
+
+static bool8 IsFlyDestinationUnlocked(mapsec_u16_t mapSecId)
+{
+    switch (mapSecId)
+    {
+    case MAPSEC_LITTLEROOT_TOWN:
+        return FlagGet(FLAG_VISITED_LITTLEROOT_TOWN);
+    case MAPSEC_OLDALE_TOWN:
+        return FlagGet(FLAG_BADGE01_GET) || FlagGet(FLAG_VISITED_OLDALE_TOWN);
+    case MAPSEC_DEWFORD_TOWN:
+        return FlagGet(FLAG_BADGE01_GET) || FlagGet(FLAG_VISITED_DEWFORD_TOWN);
+    case MAPSEC_LAVARIDGE_TOWN:
+        return FlagGet(FLAG_BADGE03_GET) || FlagGet(FLAG_VISITED_LAVARIDGE_TOWN);
+    case MAPSEC_FALLARBOR_TOWN:
+        return FlagGet(FLAG_BADGE03_GET) || FlagGet(FLAG_VISITED_FALLARBOR_TOWN);
+    case MAPSEC_VERDANTURF_TOWN:
+        return FlagGet(FLAG_VISITED_VERDANTURF_TOWN);
+    case MAPSEC_PACIFIDLOG_TOWN:
+        return FlagGet(FLAG_VISITED_PACIFIDLOG_TOWN);
+    case MAPSEC_PETALBURG_CITY:
+        return FlagGet(FLAG_BADGE04_GET) || FlagGet(FLAG_VISITED_PETALBURG_CITY);
+    case MAPSEC_SLATEPORT_CITY:
+        return FlagGet(FLAG_BADGE02_GET) || FlagGet(FLAG_VISITED_SLATEPORT_CITY);
+    case MAPSEC_MAUVILLE_CITY:
+        return FlagGet(FLAG_BADGE02_GET) || FlagGet(FLAG_VISITED_MAUVILLE_CITY);
+    case MAPSEC_RUSTBORO_CITY:
+        return FlagGet(FLAG_VISITED_RUSTBORO_CITY);
+    case MAPSEC_FORTREE_CITY:
+        return FlagGet(FLAG_BADGE05_GET) || FlagGet(FLAG_VISITED_FORTREE_CITY);
+    case MAPSEC_LILYCOVE_CITY:
+        return FlagGet(FLAG_BADGE06_GET) || FlagGet(FLAG_VISITED_LILYCOVE_CITY);
+    case MAPSEC_MOSSDEEP_CITY:
+        return FlagGet(FLAG_BADGE07_GET) || FlagGet(FLAG_VISITED_MOSSDEEP_CITY);
+    case MAPSEC_SOOTOPOLIS_CITY:
+        return FlagGet(FLAG_BADGE07_GET) || FlagGet(FLAG_VISITED_SOOTOPOLIS_CITY);
+    case MAPSEC_EVER_GRANDE_CITY:
+        return FlagGet(FLAG_BADGE08_GET) || FlagGet(FLAG_VISITED_EVER_GRANDE_CITY);
+    default:
+        return FALSE;
     }
 }
 
@@ -1838,7 +1881,6 @@ static void LoadFlyDestIcons(void)
 
 static void CreateFlyDestIcons(void)
 {
-    u16 canFlyFlag;
     mapsec_u16_t mapSecId;
     u16 x;
     u16 y;
@@ -1847,7 +1889,6 @@ static void CreateFlyDestIcons(void)
     u16 shape;
     u8 spriteId;
 
-    canFlyFlag = FLAG_VISITED_LITTLEROOT_TOWN;
     for (mapSecId = MAPSEC_LITTLEROOT_TOWN; mapSecId <= MAPSEC_EVER_GRANDE_CITY; mapSecId++)
     {
         GetMapSecDimensions(mapSecId, &x, &y, &width, &height);
@@ -1866,7 +1907,7 @@ static void CreateFlyDestIcons(void)
         {
             gSprites[spriteId].oam.shape = shape;
 
-            if (FlagGet(canFlyFlag))
+            if (IsFlyDestinationUnlocked(mapSecId))
                 gSprites[spriteId].callback = SpriteCB_FlyDestIcon;
             else
                 shape += 3;
@@ -1874,7 +1915,6 @@ static void CreateFlyDestIcons(void)
             StartSpriteAnim(&gSprites[spriteId], shape);
             gSprites[spriteId].sIconMapSec = mapSecId;
         }
-        canFlyFlag++;
     }
 }
 

@@ -376,9 +376,28 @@ static u8 PickWildMonNature(void)
     return Random() % NUM_NATURES;
 }
 
+static bool8 IsAllowedWildEncounterSpecies(u16 species)
+{
+    if (species == SPECIES_NONE || species > NUM_SPECIES)
+        return FALSE;
+
+    return gSpeciesInfo[species].types[0] == TYPE_FIRE
+        || gSpeciesInfo[species].types[1] == TYPE_FIRE
+        || gSpeciesInfo[species].types[0] == TYPE_DARK
+        || gSpeciesInfo[species].types[1] == TYPE_DARK
+        || gSpeciesInfo[species].types[0] == TYPE_LIGHT
+        || gSpeciesInfo[species].types[1] == TYPE_LIGHT
+        || (gSpeciesInfo[species].type3 != 0 && gSpeciesInfo[species].type3 - 1 == TYPE_FIRE)
+        || (gSpeciesInfo[species].type3 != 0 && gSpeciesInfo[species].type3 - 1 == TYPE_DARK)
+        || (gSpeciesInfo[species].type3 != 0 && gSpeciesInfo[species].type3 - 1 == TYPE_LIGHT);
+}
+
 static void CreateWildMon(u16 species, u8 level)
 {
     bool32 checkCuteCharm;
+
+    if (!IsAllowedWildEncounterSpecies(species))
+        species = (Random() & 1) ? SPECIES_VULPIX : SPECIES_HOUNDOUR;
 
     ZeroEnemyPartyMons();
     checkCuteCharm = TRUE;
@@ -601,7 +620,7 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
             else if (WildEncounterCheck(gWildMonHeaders[headerId].landMonsInfo->encounterRate, FALSE) != TRUE)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter() == TRUE && IsAllowedWildEncounterSpecies(gSaveBlock1Ptr->roamer.species))
             {
                 roamer = &gSaveBlock1Ptr->roamer;
                 if (!IsWildLevelAllowedByRepel(roamer->level))
@@ -640,7 +659,7 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
             else if (WildEncounterCheck(gWildMonHeaders[headerId].waterMonsInfo->encounterRate, FALSE) != TRUE)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter() == TRUE && IsAllowedWildEncounterSpecies(gSaveBlock1Ptr->roamer.species))
             {
                 roamer = &gSaveBlock1Ptr->roamer;
                 if (!IsWildLevelAllowedByRepel(roamer->level))
@@ -731,7 +750,7 @@ bool8 SweetScentWildEncounter(void)
             if (gWildMonHeaders[headerId].landMonsInfo == NULL)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter() == TRUE && IsAllowedWildEncounterSpecies(gSaveBlock1Ptr->roamer.species))
             {
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
@@ -971,19 +990,8 @@ u16 FilterNonFireTypes(u16 species)
     if (species == SPECIES_NONE || species > SPECIES_EGG)
         return species;
 
-    // Check if the species is a Fire type
-    if (gSpeciesInfo[species].types[0] == TYPE_FIRE || gSpeciesInfo[species].types[1] == TYPE_FIRE)
-    {
-        return species; // It's allowed! Keep it.
-    }
+    if (IsAllowedWildEncounterSpecies(species))
+        return species;
 
-    // If it's NOT a Fire type, randomly choose between Vulpix (Light) and Houndour (Dark)
-    if (Random() % 2 == 0)
-    {
-        return SPECIES_VULPIX;
-    }
-    else
-    {
-        return SPECIES_HOUNDOUR;
-    }
+    return SPECIES_VULPIX;
 }

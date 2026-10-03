@@ -276,8 +276,7 @@ struct BattlePokemon
     /*0x17*/ u32 abilityNum:1;
     /*0x18*/ s8 statStages[NUM_BATTLE_STATS];
     /*0x20*/ u8 ability;
-    /*0x21*/ u8 types[2];
-    /*0x23*/ u8 unknown;
+    /*0x21*/ u8 types[3];
     /*0x24*/ u8 pp[MAX_MON_MOVES];
     /*0x28*/ u16 hp;
     /*0x2A*/ u8 level;
@@ -322,6 +321,7 @@ struct SpeciesInfo
  /* 0x18 */ u8 safariZoneFleeRate;
  /* 0x19 */ u8 bodyColor : 7;
             u8 noFlip : 1;
+ /* 0x1A */ u8 type3; // Encoded as type + 1; zero means no third type.
 };
 
 struct BattleMove

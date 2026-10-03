@@ -468,11 +468,12 @@ STATIC_ASSERT(sizeof(((struct BattleStruct *)0)->palaceFlags) * 8 >= MAX_BATTLER
 
 #define TARGET_TURN_DAMAGED ((gSpecialStatuses[gBattlerTarget].physicalDmg != 0 || gSpecialStatuses[gBattlerTarget].specialDmg != 0))
 
-#define IS_BATTLER_OF_TYPE(battler, type) ((gBattleMons[battler].types[0] == type || gBattleMons[battler].types[1] == type))
+#define IS_BATTLER_OF_TYPE(battler, type) ((gBattleMons[battler].types[0] == type || gBattleMons[battler].types[1] == type || (gBattleMons[battler].types[2] != 0 && gBattleMons[battler].types[2] - 1 == type)))
 #define SET_BATTLER_TYPE(battler, type)   \
 {                                           \
     gBattleMons[battler].types[0] = type;    \
     gBattleMons[battler].types[1] = type;    \
+    gBattleMons[battler].types[2] = 0;        \
 }
 
 #define GET_STAT_BUFF_ID(n) ((n & 0xF))              // first four bits 0x1, 0x2, 0x4, 0x8
