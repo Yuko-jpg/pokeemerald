@@ -992,7 +992,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SOLAR_BEAM,
         .power = 120,
-        .type = TYPE_GRASS,
+        .type = TYPE_LIGHT,
         .accuracy = 100,
         .pp = 10,
         .secondaryEffectChance = 0,
@@ -1927,7 +1927,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_ACCURACY_DOWN,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_LIGHT,
         .accuracy = 70,
         .pp = 20,
         .secondaryEffectChance = 0,
@@ -2876,7 +2876,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_THAW_HIT,
         .power = 100,
-        .type = TYPE_FIRE,
+        .type = TYPE_LIGHT,
         .accuracy = 95,
         .pp = 5,
         .secondaryEffectChance = 50,
@@ -3045,7 +3045,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_MORNING_SUN,
         .power = 0,
-        .type = TYPE_NORMAL,
+        .type = TYPE_LIGHT,
         .accuracy = 0,
         .pp = 5,
         .secondaryEffectChance = 0,
@@ -3136,7 +3136,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
     {
         .effect = EFFECT_SUNNY_DAY,
         .power = 0,
-        .type = TYPE_FIRE,
+        .type = TYPE_LIGHT,
         .accuracy = 0,
         .pp = 5,
         .secondaryEffectChance = 0,
