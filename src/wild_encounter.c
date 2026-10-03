@@ -965,3 +965,25 @@ static void ApplyCleanseTagEncounterRateMod(u32 *encRate)
     if (GetMonData(&gPlayerParty[0], MON_DATA_HELD_ITEM) == ITEM_CLEANSE_TAG)
         *encRate = *encRate * 2 / 3;
 }
+
+u16 FilterNonFireTypes(u16 species)
+{
+    if (species == SPECIES_NONE || species > SPECIES_EGG)
+        return species;
+
+    // Check if the species is a Fire type
+    if (gSpeciesInfo[species].types[0] == TYPE_FIRE || gSpeciesInfo[species].types[1] == TYPE_FIRE)
+    {
+        return species; // It's allowed! Keep it.
+    }
+
+    // If it's NOT a Fire type, randomly choose between Vulpix (Light) and Houndour (Dark)
+    if (Random() % 2 == 0)
+    {
+        return SPECIES_VULPIX;
+    }
+    else
+    {
+        return SPECIES_HOUNDOUR;
+    }
+}

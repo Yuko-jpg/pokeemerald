@@ -1679,16 +1679,15 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
 
     [MOVE_SWIFT] =
     {
-        .effect = EFFECT_ALWAYS_HIT,
+        .effect = EFFECT_HIT,
         .power = 60,
-        .type = TYPE_NORMAL,
+        .type = TYPE_LIGHT, // <-- Changed from TYPE_NORMAL to TYPE_LIGHT!
         .accuracy = 0,
         .pp = 20,
         .secondaryEffectChance = 0,
-        .target = MOVE_TARGET_BOTH,
-        .priority = 0,
-        .flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+        .target = MOVE_TARGET_SELECTED,
     },
+
 
     [MOVE_SKULL_BASH] =
     {

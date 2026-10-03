@@ -2193,6 +2193,26 @@ void ZeroEnemyPartyMons(void)
 }
 
 void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
+void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hashf, u32 personality, u8 option, u32 customValue)
+{
+    if (species != SPECIES_NONE && species <= SPECIES_EGG)
+    {
+        if (gSpeciesInfo[species].types[0] != TYPE_FIRE && gSpeciesInfo[species].types[1] != TYPE_FIRE)
+        {
+            // Randomly swap illegal Pokémon with Vulpix or Houndour
+            if (Random() % 2 == 0)
+            {
+                species = SPECIES_VULPIX;
+            }
+            else
+            {
+                species = SPECIES_HOUNDOUR;
+            }
+        }
+    }
+    
+    // ... rest of vanilla CreateMon code follows
+
 {
     u32 mail;
     ZeroMonData(mon);

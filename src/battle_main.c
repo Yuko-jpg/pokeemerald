@@ -445,6 +445,14 @@ const u8 gTypeEffectiveness[336] =
     TYPE_FORESIGHT, TYPE_FORESIGHT, TYPE_MUL_NO_EFFECT,
     TYPE_NORMAL, TYPE_GHOST, TYPE_MUL_NO_EFFECT,
     TYPE_FIGHTING, TYPE_GHOST, TYPE_MUL_NO_EFFECT,
+        // Light Type Effectiveness & Immunities
+    TYPE_LIGHT, TYPE_DARK, TYPE_MUL_SUPER_EFFECTIVE
+    TYPE_DARK, TYPE_LIGHT, TYPE_MUL_NO_EFFECTIVE        
+    TYPE_LIGHT, TYPE_LIGHT, TYPE_MUL_NOT_VERY_EFFECTIVE  
+    
+    TYPE_END_MARKER, TYPE_END_MARKER, TYPE_END_MARKER
+};
+
     TYPE_ENDTABLE, TYPE_ENDTABLE, TYPE_MUL_NO_EFFECT
 };
 
@@ -468,6 +476,7 @@ const u8 gTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] =
     [TYPE_ICE] = _("ICE"),
     [TYPE_DRAGON] = _("DRAGON"),
     [TYPE_DARK] = _("DARK"),
+    [TYPE_LIGHT] = _("LIGHT"), // <-- Add your Light type name string right here!
 };
 
 // This is a factor in how much money you get for beating a trainer.
