@@ -416,7 +416,7 @@ static s32 GetParentToInheritNature(struct DayCare *daycare)
     u32 species[DAYCARE_MON_COUNT];
     s32 i;
     s32 dittoCount;
-    s32 parent = -1;
+    s32 parent = 0;
 
     // search for female gender
     for (i = 0; i < DAYCARE_MON_COUNT; i++)
@@ -764,23 +764,35 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parent
     u16 i;
     u16 species[DAYCARE_MON_COUNT];
     u16 eggSpecies;
+    u8 bottom = 0;
+    u8 top = 1;
+    bool8 hasDitto = FALSE;
 
     for (i = 0; i < DAYCARE_MON_COUNT; i++)
     {
         species[i] = GetBoxMonData(&daycare->mons[i].mon, MON_DATA_SPECIES);
         if (species[i] == SPECIES_DITTO)
         {
-            parentSlots[0] = i ^ 1;
-            parentSlots[1] = i;
+            bottom = i ^ 1;
+            top = i;
+            hasDitto = TRUE;
         }
         else if (GetBoxMonGender(&daycare->mons[i].mon) == MON_FEMALE)
         {
-            parentSlots[0] = i;
-            parentSlots[1] = i ^ 1;
+            bottom = i;
+            top = i ^ 1;
         }
     }
 
-    eggSpecies = GetEggSpecies(species[parentSlots[0]]);
+    if (!hasDitto
+        && GetBoxMonGender(&daycare->mons[0].mon) == GetBoxMonGender(&daycare->mons[1].mon)
+        && (Random() & 1))
+    {
+        bottom ^= 1;
+        top ^= 1;
+    }
+
+    eggSpecies = GetEggSpecies(species[bottom]);
     if (eggSpecies == SPECIES_NIDORAN_F && daycare->offspringPersonality & EGG_GENDER_MALE)
     {
         eggSpecies = SPECIES_NIDORAN_M;
@@ -791,12 +803,15 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parent
     }
 
     // Make Ditto the "mother" slot if the other daycare mon is male.
-    if (species[parentSlots[1]] == SPECIES_DITTO && GetBoxMonGender(&daycare->mons[parentSlots[0]].mon) != MON_FEMALE)
+    if (species[top] == SPECIES_DITTO && GetBoxMonGender(&daycare->mons[bottom].mon) != MON_FEMALE)
     {
-        u8 ditto = parentSlots[1];
-        parentSlots[1] = parentSlots[0];
-        parentSlots[0] = ditto;
+        u8 ditto = top;
+        top = bottom;
+        bottom = ditto;
     }
+
+    parentSlots[0] = bottom;
+    parentSlots[1] = top;
 
     return eggSpecies;
 }
@@ -1050,8 +1065,6 @@ static u8 GetDaycareCompatibilityScore(struct DayCare *daycare)
     // neither parent is Ditto
     else
     {
-        if (genders[0] == genders[1])
-            return PARENTS_INCOMPATIBLE;
         if (genders[0] == MON_GENDERLESS || genders[1] == MON_GENDERLESS)
             return PARENTS_INCOMPATIBLE;
         if (!EggGroupsOverlap(eggGroups[0], eggGroups[1]))

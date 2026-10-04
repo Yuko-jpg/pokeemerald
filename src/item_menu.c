@@ -613,6 +613,9 @@ void QuizLadyOpenBagMenu(void)
 
 void GoToBagMenu(u8 location, u8 pocket, MainCallback exitCallback)
 {
+    if (location != ITEMMENULOCATION_ITEMPC && location != ITEMMENULOCATION_WALLY)
+        MergePCItemsIntoBag();
+
     gBagMenu = AllocZeroed(sizeof(*gBagMenu));
     if (gBagMenu == NULL)
     {

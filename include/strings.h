@@ -460,6 +460,8 @@ extern const u8 gText_ItemThrownAway[];
 extern const u8 gText_SendMailToPC[];
 extern const u8 gText_MailSentToPC[];
 extern const u8 gText_PCMailboxFull[];
+extern const u8 gText_ThePC[];
+extern const u8 gText_PC[];
 extern const u8 gText_MailMessageWillBeLost[];
 extern const u8 gText_MailTakenFromPkmn[];
 extern const u8 gText_NoMoreThanVar1Pkmn[];

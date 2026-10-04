@@ -38,6 +38,27 @@ static u16 GetPCItemQuantity(u16 *quantity)
     return *quantity;
 }
 
+static bool8 CheckPCItemHasSpace(u16 itemId, u16 count)
+{
+    u8 i;
+    u16 quantity;
+
+    for (i = 0; i < PC_ITEMS_COUNT; i++)
+    {
+        if (gSaveBlock1Ptr->pcItems[i].itemId == itemId)
+        {
+            quantity = GetPCItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
+            if (quantity + count <= MAX_PC_ITEM_CAPACITY)
+                return TRUE;
+        }
+        else if (gSaveBlock1Ptr->pcItems[i].itemId == ITEM_NONE && count <= MAX_PC_ITEM_CAPACITY)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 static void SetPCItemQuantity(u16 *quantity, u16 newValue)
 {
     *quantity = newValue;
@@ -152,6 +173,18 @@ bool8 CheckBagHasItem(u16 itemId, u16 count)
                 return TRUE;
         }
     }
+    for (i = 0; i < PC_ITEMS_COUNT; i++)
+    {
+        if (gSaveBlock1Ptr->pcItems[i].itemId == itemId)
+        {
+            u16 quantity = GetPCItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
+            if (quantity >= count)
+                return TRUE;
+            count -= quantity;
+            if (count == 0)
+                return TRUE;
+        }
+    }
     return FALSE;
 }
 
@@ -177,6 +210,7 @@ bool8 CheckBagHasSpace(u16 itemId, u16 count)
     u8 pocket;
     u16 slotCapacity;
     u16 ownedCount;
+    u16 requestedCount = count;
 
     if (GetItemPocket(itemId) == POCKET_NONE)
         return FALSE;
@@ -201,7 +235,7 @@ bool8 CheckBagHasSpace(u16 itemId, u16 count)
             if (ownedCount + count <= slotCapacity)
                 return TRUE;
             if (pocket == TMHM_POCKET || pocket == BERRIES_POCKET)
-                return FALSE;
+                return CheckPCItemHasSpace(itemId, requestedCount);
             count -= (slotCapacity - ownedCount);
             if (count == 0)
                 break; //should be return TRUE, but that doesn't match
@@ -218,7 +252,7 @@ bool8 CheckBagHasSpace(u16 itemId, u16 count)
                 if (count > slotCapacity)
                 {
                     if (pocket == TMHM_POCKET || pocket == BERRIES_POCKET)
-                        return FALSE;
+                        return CheckPCItemHasSpace(itemId, requestedCount);
                     count -= slotCapacity;
                 }
                 else
@@ -229,13 +263,13 @@ bool8 CheckBagHasSpace(u16 itemId, u16 count)
             }
         }
         if (count > 0)
-            return FALSE; // No more item slots. The bag is full
+            return CheckPCItemHasSpace(itemId, requestedCount);
     }
 
     return TRUE;
 }
 
-bool8 AddBagItem(u16 itemId, u16 count)
+static bool8 AddItemToBag(u16 itemId, u16 count)
 {
     u8 i;
 
@@ -342,6 +376,36 @@ bool8 AddBagItem(u16 itemId, u16 count)
     }
 }
 
+bool8 AddBagItem(u16 itemId, u16 count)
+{
+    if (GetItemPocket(itemId) == POCKET_NONE)
+        return FALSE;
+
+    if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE || FlagGet(FLAG_STORING_ITEMS_IN_PYRAMID_BAG) == TRUE)
+        return AddPyramidBagItem(itemId, count);
+
+    if (AddItemToBag(itemId, count))
+        return TRUE;
+
+    return AddPCItem(itemId, count);
+}
+
+void MergePCItemsIntoBag(void)
+{
+    u8 i = 0;
+
+    while (i < PC_ITEMS_COUNT)
+    {
+        u16 itemId = gSaveBlock1Ptr->pcItems[i].itemId;
+        u16 quantity = GetPCItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
+
+        if (itemId != ITEM_NONE && AddItemToBag(itemId, quantity))
+            RemovePCItem(i, quantity);
+        else
+            i++;
+    }
+}
+
 bool8 RemoveBagItem(u16 itemId, u16 count)
 {
     u8 i;
@@ -369,6 +433,11 @@ bool8 RemoveBagItem(u16 itemId, u16 count)
         {
             if (itemPocket->itemSlots[i].itemId == itemId)
                 totalQuantity += GetBagItemQuantity(&itemPocket->itemSlots[i].quantity);
+        }
+        for (i = 0; i < PC_ITEMS_COUNT; i++)
+        {
+            if (gSaveBlock1Ptr->pcItems[i].itemId == itemId)
+                totalQuantity += GetPCItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
         }
 
         if (totalQuantity < count)
@@ -426,7 +495,28 @@ bool8 RemoveBagItem(u16 itemId, u16 count)
                     return TRUE;
             }
         }
-        return TRUE;
+        for (i = 0; i < PC_ITEMS_COUNT && count > 0;)
+        {
+            if (gSaveBlock1Ptr->pcItems[i].itemId == itemId)
+            {
+                ownedCount = GetPCItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
+                if (ownedCount >= count)
+                {
+                    RemovePCItem(i, count);
+                    count = 0;
+                }
+                else
+                {
+                    count -= ownedCount;
+                    RemovePCItem(i, ownedCount);
+                }
+            }
+            else
+            {
+                i++;
+            }
+        }
+        return count == 0;
     }
 }
 
@@ -677,6 +767,12 @@ u16 CountTotalItemQuantityInBag(u16 itemId)
     {
         if (bagPocket->itemSlots[i].itemId == itemId)
             ownedCount += GetBagItemQuantity(&bagPocket->itemSlots[i].quantity);
+    }
+
+    for (i = 0; i < PC_ITEMS_COUNT; i++)
+    {
+        if (gSaveBlock1Ptr->pcItems[i].itemId == itemId)
+            ownedCount += GetPCItemQuantity(&gSaveBlock1Ptr->pcItems[i].quantity);
     }
 
     return ownedCount;

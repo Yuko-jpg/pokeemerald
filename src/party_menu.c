@@ -78,6 +78,7 @@ enum {
     MENU_SWITCH,
     MENU_CANCEL1,
     MENU_ITEM,
+    MENU_PC,
     MENU_GIVE,
     MENU_TAKE_ITEM,
     MENU_MAIL,
@@ -193,7 +194,7 @@ struct PartyMenuInternal
     u32 spriteIdCancelPokeball:7;
     u32 messageId:14;
     u8 windowId[3];
-    u8 actions[8];
+    u8 actions[FIELD_MOVES_COUNT + 4];
     u8 numActions;
     // In vanilla Emerald, only the first 0xB0 hwords (0x160 bytes) are actually used.
     // However, a full 0x100 hwords (0x200 bytes) are allocated.
@@ -341,6 +342,7 @@ static void Task_HandleSelectionMenuInput(u8);
 static void CB2_ShowPokemonSummaryScreen(void);
 static void UpdatePartyToBattleOrder(void);
 static void CB2_ReturnToPartyMenuFromSummaryScreen(void);
+static void CB2_OpenPokemonPC(void);
 static void SlidePartyMenuBoxOneStep(u8);
 static void Task_SlideSelectedSlotsOffscreen(u8);
 static void SwitchPartyMon(void);
@@ -461,6 +463,7 @@ static void CursorCb_Summary(u8);
 static void CursorCb_Switch(u8);
 static void CursorCb_Cancel1(u8);
 static void CursorCb_Item(u8);
+static void CursorCb_PC(u8);
 static void CursorCb_Give(u8);
 static void CursorCb_TakeItem(u8);
 static void CursorCb_Mail(u8);
@@ -1232,11 +1235,17 @@ static void Task_ClosePartyMenuAndSetCB2(u8 taskId)
 {
     if (!gPaletteFade.active)
     {
+        MainCallback exitCallback;
+
         if (gPartyMenu.menuType == PARTY_MENU_TYPE_IN_BATTLE)
             UpdatePartyToFieldOrder();
 
         if (sPartyMenuInternal->exitCallback != NULL)
-            SetMainCallback2(sPartyMenuInternal->exitCallback);
+        {
+            exitCallback = sPartyMenuInternal->exitCallback;
+            sPartyMenuInternal->exitCallback = NULL;
+            SetMainCallback2(exitCallback);
+        }
         else
             SetMainCallback2(gPartyMenu.exitCallback);
 
@@ -2633,6 +2642,8 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
         else
             AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_ITEM);
     }
+    if (!InMultiPartnerRoom())
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_PC);
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
 }
 
@@ -3081,6 +3092,18 @@ static void CursorCb_Item(u8 taskId)
     DisplayPartyMenuStdMessage(PARTY_MSG_DO_WHAT_WITH_ITEM);
     gTasks[taskId].data[0] = 0xFF;
     gTasks[taskId].func = Task_HandleSelectionMenuInput;
+}
+
+static void CursorCb_PC(u8 taskId)
+{
+    PlaySE(SE_SELECT);
+    sPartyMenuInternal->exitCallback = CB2_OpenPokemonPC;
+    Task_ClosePartyMenu(taskId);
+}
+
+static void CB2_OpenPokemonPC(void)
+{
+    ShowPokemonStorageSystemFromParty();
 }
 
 static void CursorCb_Give(u8 taskId)
