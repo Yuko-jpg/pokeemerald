@@ -343,6 +343,7 @@ static void CB2_ShowPokemonSummaryScreen(void);
 static void UpdatePartyToBattleOrder(void);
 static void CB2_ReturnToPartyMenuFromSummaryScreen(void);
 static void CB2_OpenPokemonPC(void);
+static bool8 FieldCallback_OpenPokemonStorage(void);
 static void SlidePartyMenuBoxOneStep(u8);
 static void Task_SlideSelectedSlotsOffscreen(u8);
 static void SwitchPartyMon(void);
@@ -3103,7 +3104,14 @@ static void CursorCb_PC(u8 taskId)
 
 static void CB2_OpenPokemonPC(void)
 {
+    gFieldCallback2 = FieldCallback_OpenPokemonStorage;
+    SetMainCallback2(CB2_ReturnToField);
+}
+
+static bool8 FieldCallback_OpenPokemonStorage(void)
+{
     ShowPokemonStorageSystemFromParty();
+    return TRUE;
 }
 
 static void CursorCb_Give(u8 taskId)
